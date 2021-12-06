@@ -18,11 +18,7 @@ $dir = explode('includes', dirname(__FILE__))[0];
 
 include_once $dir.'/init.php';
 
-
-
 use WHMCS\Database\Capsule;
-
-
 
 $domain_price_types = [
 
@@ -31,8 +27,6 @@ $domain_price_types = [
     'Transfer' => 'domaintransfer'
 
 ];
-
-
 
 $domain_api_price_types = [
 
@@ -43,8 +37,6 @@ $domain_api_price_types = [
     'domainrenew' => 'renewdomain'
 
 ];
-
-
 
 $domain_price_periods = [
 
@@ -70,8 +62,6 @@ $domain_price_periods = [
 
 ];
 
-
-
 $domain_periods = [
 
     'msetupfee',
@@ -96,22 +86,16 @@ $domain_periods = [
 
 ];
 
-
-
 $total_updated_client = 0;
 
-$total_updated_domain = 0;
-
+$total_updated_domain = 0
 
 
 //Komisyon Oranı = 1.20 = %20 --- 1.30 = %30
 
 $price_multiplier = 1.30;
 
-
-
 $postfields = [];
-
 
 
 //ResellerClub API Bilgileri
@@ -120,17 +104,11 @@ $postfields['auth-userid'] = 'USER-ID';
 
 $postfields['api-key'] = 'ApiKey';
 
-
-
 try{
-
-
 
     $try_id = Capsule::table('tblcurrencies')->where('code', 'TRY')->value('id');
 
     $get_domains = Capsule::table('tbldomainpricing')->get();
-
-
 
     $tld_details = domain_pricing_SendCommand('details', 'products', $postfields, '', 'GET', true);
 
@@ -144,12 +122,9 @@ try{
 
           if(in_array(substr($domain->extension, 1), $data['tldlist'])) $domain_names[$domain->extension] = $key;
 
-
-
       }
 
     }
-
 
 
     foreach($get_domains as $domain){
@@ -187,8 +162,6 @@ try{
             $total_updated_domain++;
 
         }
-
-
 
         // Müşterilerin ürünlerini zamlandırma
 
@@ -234,8 +207,6 @@ try{
 
     exit($message);
 
-
-
 }catch (Exception $e){
 
     $message = "Alan adı ücretleri güncellenirken bir hata oluştu. Hata: {$e->getMessage()}";
@@ -245,10 +216,6 @@ try{
     exit($message);
 
 }
-
-
-
-
 
 function domain_pricing_GetIP()
 
@@ -281,8 +248,6 @@ function domain_pricing_GetIP()
     return "";
 
 }
-
-
 
 function domain_pricing_SendCommand($command, $type, $postfields, $params, $method, $jsonDecodeResult = false) {
 
@@ -365,8 +330,6 @@ function domain_pricing_SendCommand($command, $type, $postfields, $params, $meth
     return $result;
 
 }
-
-
 
 function extractTLD( $domain ) {
 
