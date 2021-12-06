@@ -1,0 +1,1 @@
+# ResellerClub-WHMCS-Auto-Price-Update
