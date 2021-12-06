@@ -1,5 +1,4 @@
 <?php
-
 /*
     * WHMCS ResellerClub Auto Domain Price Crons
     *
@@ -21,17 +20,14 @@ include_once $dir.'/init.php';
 use WHMCS\Database\Capsule;
 
 $domain_price_types = [
-
     'Register' => 'domainrenew',
-
     'Transfer' => 'domaintransfer'
-
 ];
 
 $domain_api_price_types = [
     'domainregister' => 'addnewdomain',
     'domaintransfer' => 'addtransferdomain',
-    'domainrenew' => 'renewdomain'
+    'domainrenew'    => 'renewdomain'
 ];
 
 $domain_price_periods = [
