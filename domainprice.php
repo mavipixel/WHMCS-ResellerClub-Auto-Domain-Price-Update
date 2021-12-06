@@ -18,11 +18,7 @@ $dir = explode('includes', dirname(__FILE__))[0];
 
 include_once $dir.'/init.php';
 
-
-
 use WHMCS\Database\Capsule;
-
-
 
 $domain_price_types = [
 
@@ -32,105 +28,57 @@ $domain_price_types = [
 
 ];
 
-
-
 $domain_api_price_types = [
-
     'domainregister' => 'addnewdomain',
-
     'domaintransfer' => 'addtransferdomain',
-
     'domainrenew' => 'renewdomain'
-
 ];
-
-
 
 $domain_price_periods = [
-
     1 => 'msetupfee',
-
     2 => 'qsetupfee',
-
     3 => 'ssetupfee',
-
     4 => 'asetupfee',
-
     5 => 'bsetupfee',
-
     6 => 'monthly',
-
     7 => 'quarterly',
-
     8 => 'semiannually',
-
     9 => 'annually',
-
     10 => 'biennially'
-
 ];
-
-
 
 $domain_periods = [
-
     'msetupfee',
-
     'qsetupfee',
-
     'ssetupfee',
-
     'asetupfee',
-
     'bsetupfee',
-
     'monthly',
-
     'quarterly',
-
     'semiannually',
-
     'annually',
-
     'biennially'
-
 ];
 
-
-
 $total_updated_client = 0;
-
 $total_updated_domain = 0;
-
-
 
 //Komisyon Oranı = 1.20 = %20 --- 1.30 = %30
 
 $price_multiplier = 1.30;
 
-
-
 $postfields = [];
-
-
 
 //ResellerClub API Bilgileri
 
 $postfields['auth-userid'] = 'USER-ID';
-
 $postfields['api-key'] = 'ApiKey';
 
-
-
 try{
-
-
-
+   
     $try_id = Capsule::table('tblcurrencies')->where('code', 'TRY')->value('id');
 
     $get_domains = Capsule::table('tbldomainpricing')->get();
-
-
 
     $tld_details = domain_pricing_SendCommand('details', 'products', $postfields, '', 'GET', true);
 
@@ -144,14 +92,9 @@ try{
 
           if(in_array(substr($domain->extension, 1), $data['tldlist'])) $domain_names[$domain->extension] = $key;
 
-
-
       }
-
     }
-
-
-
+   
     foreach($get_domains as $domain){
 
       if(strlen($domain_names[$domain->extension]) < 1) continue;
@@ -179,16 +122,11 @@ try{
                         $ks => intval((floatval($tld_pricings[$domain_names[$domain->extension]][$domain_api_price_types[$pricing->type]]["1"] * $price_multiplier)) * array_search($ks, $domain_price_periods))
 
                     ]);
-
                 }
-
             }
 
             $total_updated_domain++;
-
         }
-
-
 
         // Müşterilerin ürünlerini zamlandırma
 
@@ -213,9 +151,7 @@ try{
             }else{
 
                 $new_price = Capsule::table('tblpricing')->where('type', $domain_price_types[$account->type])->where('relid', $domain->id)->where('currency', $try_id)->value($domain_price_periods[(int)$account->registrationperiod]);
-
             }
-
             if($new_price <= 0) continue;
 
             Capsule::table('tbldomains')->where('id', $account->id)->where('domain', $account->domain)->update(['recurringamount' => $new_price]);
@@ -223,9 +159,6 @@ try{
             $total_updated_client++;
 
         }
-
-
-
     }
 
     $message = "Günlük alan adı fiyat güncellemesi işlemi tamamlandı. {$total_updated_domain} adet alan adının fiyatı güncellendi. Toplam {$total_updated_client} alan adı hizmetinin yineleme fiyatı güncellendi.";
@@ -234,25 +167,17 @@ try{
 
     exit($message);
 
-
-
 }catch (Exception $e){
-
+   
     $message = "Alan adı ücretleri güncellenirken bir hata oluştu. Hata: {$e->getMessage()}";
 
     logActivity($message);
 
     exit($message);
-
+   
 }
 
-
-
-
-
-function domain_pricing_GetIP()
-
-{
+function domain_pricing_GetIP() {
 
     $ch = curl_init();
 
@@ -281,8 +206,6 @@ function domain_pricing_GetIP()
     return "";
 
 }
-
-
 
 function domain_pricing_SendCommand($command, $type, $postfields, $params, $method, $jsonDecodeResult = false) {
 
@@ -313,13 +236,12 @@ function domain_pricing_SendCommand($command, $type, $postfields, $params, $meth
                 $queryParams .= "&" . build_query_string(array($field => $data), PHP_QUERY_RFC3986);
 
             }
-
         }
 
         if ($queryParams) {
 
             $url .= "?" . ltrim($queryParams, "&");
-
+           
         }
 
         unset($queryParams);
@@ -327,8 +249,6 @@ function domain_pricing_SendCommand($command, $type, $postfields, $params, $meth
         $callDataForLog["url"] = $url;
 
     }
-
-
 
     $ch = curlCall($url, $postFieldQuery, $curlOptions, true);
 
@@ -355,9 +275,7 @@ function domain_pricing_SendCommand($command, $type, $postfields, $params, $meth
             $result = json_decode($data, true);
 
         }
-
     }
-
     curl_close($ch);
 
     logModuleCall("logicboxes", (string) $type . "/" . $command, $callDataForLog, $data, $result, array($params["ResellerID"], $params["APIKey"]));
@@ -365,8 +283,6 @@ function domain_pricing_SendCommand($command, $type, $postfields, $params, $meth
     return $result;
 
 }
-
-
 
 function extractTLD( $domain ) {
 
